@@ -1,0 +1,8 @@
+Quick start for development
+1. Clone the repository
+2. Run `npm install`
+3. run `grunt setup_dev`
+4. run `grunt dev_serve` + turn on livereload on your browsers
+5. Working on your project and enjoy the automated workflow
+
+To build production version (will be added soon)

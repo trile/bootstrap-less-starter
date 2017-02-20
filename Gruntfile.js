@@ -15,43 +15,95 @@ module.exports = function(grunt) {
       },
     },
 
-    // clean the build folder
     clean: {
-      development: {
-        src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors/']
-      },
-      build: {
-        src: 'build'
-      },
+        reset: {
+            src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors']
+        },
+        development: {
+            src: ['app/css/*']
+        },
+        build: {
+            src: ['app/css']
+        }
     },
 
     // compile less file
     less: {
-      development: {
-        files: {
-          "app/css/main.css": "app/less/main.less"
+        development: {
+            options: {
+                strictMath: true
+            },
+            files: {
+                "app/css/main.css": "app/less/main.less"
+            }
+        },
+        build: {
+            options: {
+                strictMath: true,
+                sourceMap: true,
+                outputSourceFiles: true,
+                sourceMapURL: 'main.css.map',
+                sourceMapFilename: 'app/css/main.css.map'
+            },
+            files: {
+                "app/css/main.css": "app/less/main.less"
+            }
         }
-      },
     },
 
-    // autoprefixer: {
-    //   development: {
-    //     build: {
-    //       expand: true,
-    //       cwd: 'app/css',
-    //       src: ['*.css'],
-    //       dest: 'app/css'
-    //     }
-    //   },
-    // },
+    autoprefixer: {
+        options: {
+            // map: true,
+            browsers: [
+                "Android 2.3",
+                "Android >= 4",
+                "Chrome >= 20",
+                "Firefox >= 24",
+                "Explorer >= 8",
+                "iOS >= 6",
+                "Opera >= 12",
+                "Safari >= 6"
+            ]
+        },
+        development: {
+            expand: true,
+            cwd: 'app/css',
+            src: ['*.css'],
+            dest: 'app/css'
+        }
+    },
+
+    csscomb: {
+        options: {
+            config: 'app/less/.csscomb.json'
+        },
+        development: {
+            expand: true,
+            cwd: 'app/css/',
+            src: ['*.css', '!*.min.css'],
+            dest: 'app/css/'
+        }
+    },
 
     cssmin: {
-      development: {
-        files: [{
-          src: [ 'app/css/main.css' ],
-          dest: 'app/css/main.min.css'
-        }]
-      }
+        development: {
+            src: ['app/css/main.css'],
+            dest: 'app/css/main.min.css'
+        },
+        build: {
+            options: {
+                // TODO: disable `zeroUnits` optimization once clean-css 3.2 is released
+                //    and then simplify the fix for https://github.com/twbs/bootstrap/issues/14837 accordingly
+                compatibility: 'ie8',
+                keepSpecialComments: '*',
+                sourceMap: true,
+                sourceMapInlineSources: true,
+                advanced: false
+            },
+            src: ['app/css/main.css'],
+            dest: 'app/css/main.min.css'
+        }
+
     },
 
     uglify: {
@@ -69,7 +121,7 @@ module.exports = function(grunt) {
       less: {
         options: { livereload: true },
         files: ['app/less/*', 'app/js/*', 'app/index.html'],
-        tasks: ['less', 'cssmin']
+        tasks: ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']
       }
     },
 
@@ -85,12 +137,13 @@ module.exports = function(grunt) {
 
   });
 
+
   // define the tasks
-  grunt.registerTask('init_development', ['copy:dev_init']);
-  grunt.registerTask('reset_development', ['clean:development']);
-  grunt.registerTask('compile_less', ['less:development', 'cssmin:development']);
-  grunt.registerTask('dev_compile', ['less:development', 'autoprefixer:development', 'cssmin:development']);
-  grunt.registerTask('dev_serve', ['less:development', 'cssmin:development', 'connect:development', 'watch:less']);
+  grunt.registerTask('setup_dev', ['copy:dev_init']);
+  grunt.registerTask('reset_dev', ['clean:reset']);
+  grunt.registerTask('dev_compile', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
+  grunt.registerTask('build', ['clean:build', 'less:build', 'autoprefixer', 'csscomb', 'cssmin:build']);
+  grunt.registerTask('dev_serve', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:development', 'watch:less']);
 
 
   // load the tasks
@@ -102,4 +155,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-csscomb');
 };
