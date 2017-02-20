@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    //copy file from app tree structure to build folder
+    //copy source from Bootstrap folder in node_modules to app
     copy: {
       dev_init: {
         files: [
@@ -15,6 +15,7 @@ module.exports = function(grunt) {
       },
     },
 
+    // Clean up before actions
     clean: {
         reset: {
             src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors']
@@ -27,7 +28,7 @@ module.exports = function(grunt) {
         }
     },
 
-    // compile less file
+    // Compile less file
     less: {
         development: {
             options: {
@@ -51,6 +52,7 @@ module.exports = function(grunt) {
         }
     },
 
+    // Auto prefix for browser
     autoprefixer: {
         options: {
             // map: true,
@@ -73,6 +75,7 @@ module.exports = function(grunt) {
         }
     },
 
+    // Set up proper format for css files
     csscomb: {
         options: {
             config: 'app/less/.csscomb.json'
@@ -85,6 +88,7 @@ module.exports = function(grunt) {
         }
     },
 
+    // Minimize CSS files
     cssmin: {
         development: {
             src: ['app/css/main.css'],
@@ -106,25 +110,28 @@ module.exports = function(grunt) {
 
     },
 
-    uglify: {
-      development: {
-        options: {
-          mangle: false
-        },
-        files: {
-          'app/js/main.js': [ 'app/js/*.js' ]
-        }
-      }
-    },
+    // Optimize JS files
+    // uglify: {
+    //   development: {
+    //     options: {
+    //       mangle: false
+    //     },
+    //     files: {
+    //       'app/js/main.js': [ 'app/js/*.js' ]
+    //     }
+    //   }
+    // },
 
+    // Watch files to rerun workflow and use live reload to refresh browser
     watch: {
       less: {
         options: { livereload: true },
-        files: ['app/less/*', 'app/js/*', 'app/index.html'],
+        files: ['app/less/*', 'app/js/*', 'app/*.html'],
         tasks: ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']
       }
     },
 
+    // Setup local server for development
     connect: {
       development: {
         options: {
