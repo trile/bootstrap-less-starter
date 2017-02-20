@@ -6491,7 +6491,9 @@ button.close {
 .modal-header:before,
 .modal-header:after,
 .modal-footer:before,
-.modal-footer:after {
+.modal-footer:after,
+.focus:before,
+.focus:after {
   display: table;
   content: " ";
 }
@@ -6510,7 +6512,8 @@ button.close {
 .pager:after,
 .panel-body:after,
 .modal-header:after,
-.modal-footer:after {
+.modal-footer:after,
+.focus:after {
   clear: both;
 }
 .center-block {
@@ -9133,5 +9136,22 @@ button.close {
   clip: auto;
 }
 body {
-  margin-top: 50px;
+  padding-top: 50px;
+  padding-bottom: 30px;
+}
+.focus {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+.focus-points {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+@media (min-width: 992px) {
+  .focus-points {
+    float: left;
+    width: 33.33333333%;
+  }
 }
