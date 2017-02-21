@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         //copy source from Bootstrap folder in node_modules to app
         copy: {
-            dev_init: {
+            bootstrap_less: {
                 files: [{
                         expand: true,
                         flatten: true,
@@ -15,34 +15,41 @@ module.exports = function(grunt) {
                         flatten: true,
                         src: ['node_modules/bootstrap/less/mixins/*'],
                         dest: 'app/less/vendors/bootstrap/mixins'
-                    },
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['node_modules/font-awesome/less/*'],
-                        dest: 'app/less/vendors/font-awesome'
-                    },
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['node_modules/jquery/dist/jquery.min.*'],
-                        dest: 'app/js/'
-                    },
-                    {
-                        expand: true,
-                        flatten: true,
-                        src: ['node_modules/bootstrap/dist/js/bootstrap.min.js'],
-                        dest: 'app/js/'
-                    },
-                    {
-                        expand: true,
-                        flatten: true,
-                        cwd: 'node_modules/bootstrap/dist',
-                        src: ['fonts/*'],
-                        dest: 'app/fonts/'
-                    },
-                ],
+                    }
+                ]
+            }
+            font_awesome: {
+                expand: true,
+                flatten: true,
+                src: ['node_modules/font-awesome/less/*'],
+                dest: 'app/less/vendors/font-awesome'
             },
+            bootstrap_dist: {
+                expand: true,
+                flatten: true,
+                src: ['node_modules/bootstrap/dist/css/bootstrap.min.*'],
+                dest: 'app/css/'
+            }
+            jquery: {
+                expand: true,
+                flatten: true,
+                src: ['node_modules/jquery/dist/jquery.min.*'],
+                dest: 'app/js/'
+            },
+            bootstrap_js: {
+                expand: true,
+                flatten: true,
+                src: ['node_modules/bootstrap/dist/js/bootstrap.min.js'],
+                dest: 'app/js/'
+            },
+            bootstrap_font: {
+                expand: true,
+                flatten: true,
+                cwd: 'node_modules/bootstrap/dist',
+                src: ['fonts/*'],
+                dest: 'app/fonts/'
+            }
+
         },
 
         // Clean up before actions
@@ -185,12 +192,13 @@ module.exports = function(grunt) {
 
 
     // define the tasks
-    grunt.registerTask('dev-setup', ['copy:dev_init']);
+    grunt.registerTask('setup-less', ['copy:bootstrap_less', 'copy:font_awesome', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
+    grunt.registerTask('setup-external-bootstrap', ['copy:bootstrap_dist', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
     grunt.registerTask('dev-reset', ['clean:reset']);
-    grunt.registerTask('dev-compile', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
-    grunt.registerTask('dist', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
-    grunt.registerTask('test', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
-    grunt.registerTask('server', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:livereload', 'watch']);
+    grunt.registerTask('dev-compile-less', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
+    grunt.registerTask('dist-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('test-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('less-server', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:livereload', 'watch']);
 
 
     // load the tasks
