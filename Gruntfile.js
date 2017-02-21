@@ -1,166 +1,206 @@
 module.exports = function(grunt) {
 
-  grunt.initConfig({
-    //copy source from Bootstrap folder in node_modules to app
-    copy: {
-      dev_init: {
-        files: [
-          { expand: true, flatten: true, src: ['node_modules/bootstrap/less/*'], dest: 'app/less/vendors/bootstrap'},
-          { expand: true, flatten: true, src: ['node_modules/bootstrap/less/mixins/*'], dest: 'app/less/vendors/bootstrap/mixins'},
-          { expand: true, flatten: true, src: ['node_modules/font-awesome/less/*'], dest: 'app/less/vendors/font-awesome'},
-          { expand: true, flatten: true, src: ['node_modules/jquery/dist/jquery.min.*'], dest: 'app/js/'},
-          { expand: true, flatten: true, src: ['node_modules/bootstrap/dist/js/bootstrap.min.js'], dest: 'app/js/' },
-          { expand: true, flatten: true, cwd: 'node_modules/bootstrap/dist', src: ['fonts/*'], dest: 'app/fonts/'},
-        ],
-      },
-    },
-
-    // Clean up before actions
-    clean: {
-        reset: {
-            src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors']
-        },
-        development: {
-            src: ['app/css/*']
-        },
-        build: {
-            src: ['app/css']
-        }
-    },
-
-    // Compile less file
-    less: {
-        development: {
-            options: {
-                strictMath: true
+    grunt.initConfig({
+        //copy source from Bootstrap folder in node_modules to app
+        copy: {
+            dev_init: {
+                files: [{
+                        expand: true,
+                        flatten: true,
+                        src: ['node_modules/bootstrap/less/*'],
+                        dest: 'app/less/vendors/bootstrap'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['node_modules/bootstrap/less/mixins/*'],
+                        dest: 'app/less/vendors/bootstrap/mixins'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['node_modules/font-awesome/less/*'],
+                        dest: 'app/less/vendors/font-awesome'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['node_modules/jquery/dist/jquery.min.*'],
+                        dest: 'app/js/'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['node_modules/bootstrap/dist/js/bootstrap.min.js'],
+                        dest: 'app/js/'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        cwd: 'node_modules/bootstrap/dist',
+                        src: ['fonts/*'],
+                        dest: 'app/fonts/'
+                    },
+                ],
             },
-            files: {
-                "app/css/main.css": "app/less/main.less"
+        },
+
+        // Clean up before actions
+        clean: {
+            reset: {
+                src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors']
+            },
+            development: {
+                src: ['app/css/*']
+            },
+            dist: {
+                src: ['app/css']
             }
         },
-        build: {
-            options: {
-                strictMath: true,
-                sourceMap: true,
-                outputSourceFiles: true,
-                sourceMapURL: 'main.css.map',
-                sourceMapFilename: 'app/css/main.css.map'
+
+        // Compile less file
+        less: {
+            development: {
+                options: {
+                    strictMath: true
+                },
+                files: {
+                    "app/css/main.css": "app/less/main.less"
+                }
             },
-            files: {
-                "app/css/main.css": "app/less/main.less"
+            dist: {
+                options: {
+                    strictMath: true,
+                    sourceMap: true,
+                    outputSourceFiles: true,
+                    sourceMapURL: 'main.css.map',
+                    sourceMapFilename: 'app/css/main.css.map'
+                },
+                files: {
+                    "app/css/main.css": "app/less/main.less"
+                }
+            }
+        },
+
+        // Auto prefix for browser
+        autoprefixer: {
+            options: {
+                // map: true,
+                browsers: [
+                    "Android 2.3",
+                    "Android >= 4",
+                    "Chrome >= 20",
+                    "Firefox >= 24",
+                    "Explorer >= 8",
+                    "iOS >= 6",
+                    "Opera >= 12",
+                    "Safari >= 6"
+                ]
+            },
+            development: {
+                expand: true,
+                cwd: 'app/css',
+                src: ['*.css'],
+                dest: 'app/css'
+            }
+        },
+
+        // Set up proper format for css files
+        csscomb: {
+            options: {
+                config: 'app/less/.csscomb.json'
+            },
+            development: {
+                expand: true,
+                cwd: 'app/css/',
+                src: ['*.css', '!*.min.css'],
+                dest: 'app/css/'
+            }
+        },
+
+        // Minimize CSS files
+        cssmin: {
+            development: {
+                src: ['app/css/main.css'],
+                dest: 'app/css/main.min.css'
+            },
+            dist: {
+                options: {
+                    // TODO: disable `zeroUnits` optimization once clean-css 3.2 is released
+                    //    and then simplify the fix for https://github.com/twbs/bootstrap/issues/14837 accordingly
+                    compatibility: 'ie8',
+                    keepSpecialComments: '*',
+                    sourceMap: true,
+                    sourceMapInlineSources: true,
+                    advanced: false
+                },
+                src: ['app/css/main.css'],
+                dest: 'app/css/main.min.css'
+            }
+
+        },
+
+        //Optimize JS files
+        // uglify: {
+        //   dist: {
+        //     options: {
+        //       mangle: false
+        //     },
+        //     files: {
+        //       'app/js/main.js': [ 'app/js/*.js' ]
+        //     }
+        //   }
+        // },
+
+        // Setup local server for development
+        connect: {
+            options: {
+                port: 8080,
+                livereload: 42201,
+                base: 'app',
+                hostname: 'localhost'
+            },
+            livereload: {
+                options: {
+                    open: true
+                }
+            }
+        },
+
+        // Watch files to rerun workflow and use live reload to refresh browser
+        watch: {
+            less: {
+                files: ['app/less/**/*.less'],
+                tasks: ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']
+            },
+            livereload: {
+                options: {
+                    livereload: '<%= connect.options.livereload %>'
+                },
+                files: ['{,*/}*.html', 'app/css/{,*/}*.css', 'app/js/{,*/}*.js']
             }
         }
-    },
 
-    // Auto prefix for browser
-    autoprefixer: {
-        options: {
-            // map: true,
-            browsers: [
-                "Android 2.3",
-                "Android >= 4",
-                "Chrome >= 20",
-                "Firefox >= 24",
-                "Explorer >= 8",
-                "iOS >= 6",
-                "Opera >= 12",
-                "Safari >= 6"
-            ]
-        },
-        development: {
-            expand: true,
-            cwd: 'app/css',
-            src: ['*.css'],
-            dest: 'app/css'
-        }
-    },
-
-    // Set up proper format for css files
-    csscomb: {
-        options: {
-            config: 'app/less/.csscomb.json'
-        },
-        development: {
-            expand: true,
-            cwd: 'app/css/',
-            src: ['*.css', '!*.min.css'],
-            dest: 'app/css/'
-        }
-    },
-
-    // Minimize CSS files
-    cssmin: {
-        development: {
-            src: ['app/css/main.css'],
-            dest: 'app/css/main.min.css'
-        },
-        build: {
-            options: {
-                // TODO: disable `zeroUnits` optimization once clean-css 3.2 is released
-                //    and then simplify the fix for https://github.com/twbs/bootstrap/issues/14837 accordingly
-                compatibility: 'ie8',
-                keepSpecialComments: '*',
-                sourceMap: true,
-                sourceMapInlineSources: true,
-                advanced: false
-            },
-            src: ['app/css/main.css'],
-            dest: 'app/css/main.min.css'
-        }
-
-    },
-
-    // Optimize JS files
-    // uglify: {
-    //   development: {
-    //     options: {
-    //       mangle: false
-    //     },
-    //     files: {
-    //       'app/js/main.js': [ 'app/js/*.js' ]
-    //     }
-    //   }
-    // },
-
-    // Watch files to rerun workflow and use live reload to refresh browser
-    watch: {
-      less: {
-        options: { livereload: true },
-        files: ['app/less/*', 'app/js/*', 'app/*.html'],
-        tasks: ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']
-      }
-    },
-
-    // Setup local server for development
-    connect: {
-      development: {
-        options: {
-          port: 8080,
-          base: 'app',
-          hostname: '*'
-        }
-      }
-    },
-
-  });
+    });
 
 
-  // define the tasks
-  grunt.registerTask('setup_dev', ['copy:dev_init']);
-  grunt.registerTask('reset_dev', ['clean:reset']);
-  grunt.registerTask('dev_compile', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
-  grunt.registerTask('build', ['clean:build', 'less:build', 'autoprefixer', 'csscomb', 'cssmin:build']);
-  grunt.registerTask('dev_serve', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:development', 'watch:less']);
+    // define the tasks
+    grunt.registerTask('dev-setup', ['copy:dev_init']);
+    grunt.registerTask('dev-reset', ['clean:reset']);
+    grunt.registerTask('dev-compile', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
+    grunt.registerTask('dist', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('test', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('server', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:livereload', 'watch']);
 
 
-  // load the tasks
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-autoprefixer');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-csscomb');
+    // load the tasks
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-csscomb');
 };
