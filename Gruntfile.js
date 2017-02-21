@@ -17,7 +17,7 @@ module.exports = function(grunt) {
                         dest: 'app/less/vendors/bootstrap/mixins'
                     }
                 ]
-            }
+            },
             font_awesome: {
                 expand: true,
                 flatten: true,
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                 flatten: true,
                 src: ['node_modules/bootstrap/dist/css/bootstrap.min.*'],
                 dest: 'app/css/'
-            }
+            },
             jquery: {
                 expand: true,
                 flatten: true,
@@ -42,11 +42,10 @@ module.exports = function(grunt) {
                 src: ['node_modules/bootstrap/dist/js/bootstrap.min.js'],
                 dest: 'app/js/'
             },
-            bootstrap_font: {
+            bootstrap_fonts: {
                 expand: true,
                 flatten: true,
-                cwd: 'node_modules/bootstrap/dist',
-                src: ['fonts/*'],
+                src: ['node_modules/bootstrap/dist/fonts/*'],
                 dest: 'app/fonts/'
             }
 
@@ -192,12 +191,12 @@ module.exports = function(grunt) {
 
 
     // define the tasks
-    grunt.registerTask('setup-less', ['clean:reset','copy:bootstrap_less', 'copy:font_awesome', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
-    grunt.registerTask('setup-external-bootstrap', ['clean:reset','copy:bootstrap_dist', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
-    grunt.registerTask('dev-compile-less', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
-    grunt.registerTask('dist-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
-    grunt.registerTask('test-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
-    grunt.registerTask('less-server', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:livereload', 'watch']);
+    grunt.registerTask('setup-less', ['clean:reset','copy:bootstrap_less', 'copy:font_awesome', 'copy:bootstrap_js', 'copy:bootstrap_fonts', 'copy:jquery']);
+    grunt.registerTask('setup-external-bs', ['clean:reset','copy:bootstrap_dist', 'copy:bootstrap_js', 'copy:bootstrap_fonts', 'copy:jquery']);
+    grunt.registerTask('dev-compile', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
+    grunt.registerTask('dist', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('test', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
+    grunt.registerTask('server', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development', 'connect:livereload', 'watch']);
 
 
     // load the tasks
