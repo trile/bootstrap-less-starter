@@ -54,13 +54,19 @@ module.exports = function(grunt) {
         // Clean up before actions
         clean: {
             reset: {
-                src: ['app/css', 'app/fonts', 'app/js', 'app/less/vendors']
+                src: [
+                    'app/css/main.css',
+                    'app/css/main.min.css',
+                    'app/fonts',
+                    'app/js/jquery.min.*',
+                    'app/js/bootstrap.min.*',
+                    'app/less/vendors']
             },
             development: {
-                src: ['app/css/*']
+                src: ['app/css/main.css', 'app/css/main.min.css']
             },
             dist: {
-                src: ['app/css']
+                src: ['app/css/main.css', 'app/css/main.min.css']
             }
         },
 
