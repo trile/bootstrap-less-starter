@@ -192,9 +192,8 @@ module.exports = function(grunt) {
 
 
     // define the tasks
-    grunt.registerTask('setup-less', ['copy:bootstrap_less', 'copy:font_awesome', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
-    grunt.registerTask('setup-external-bootstrap', ['copy:bootstrap_dist', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
-    grunt.registerTask('dev-reset', ['clean:reset']);
+    grunt.registerTask('setup-less', ['clean:reset','copy:bootstrap_less', 'copy:font_awesome', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
+    grunt.registerTask('setup-external-bootstrap', ['clean:reset','copy:bootstrap_dist', 'copy:bootstrap_js', 'copy:boostrap_fonts', 'copy:jquery']);
     grunt.registerTask('dev-compile-less', ['less:development', 'autoprefixer', 'csscomb', 'cssmin:development']);
     grunt.registerTask('dist-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
     grunt.registerTask('test-less', ['clean:dist', 'less:dist', 'autoprefixer', 'csscomb', 'cssmin:dist']);
